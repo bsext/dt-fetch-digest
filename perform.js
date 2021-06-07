@@ -116,11 +116,7 @@ function send_request(prm,cb)
   options.encoding = (prm.resp_encode == 'binary')?null:'utf8';
 
   fetchrq(options).then((res) =>{
-    if (!res.err) {
-      cb(res.err, res.resp, res.body);
-    }else{
-      cb(new Error("request error"));
-    }
+    cb(res.err, res.resp, res.body);
   })
 
   // request(options, function (err, resp, body) {
@@ -148,10 +144,10 @@ async function fetchrq(prm){
 
   //Authen
   if(typeof prm.authen == 'object' && prm.authen.type == 'digest'){
-    client = new DigestFetch(prm.authen.username,prm.authen.password)
+    client = new DigestFetch(prm.authen.username,prm.authen.password).fetch
   }
 
-  let response = await client.fetch(url,opt)
+  let response = await client(url,opt)
   let respdata = await response.buffer()
 
   if(response.status >= 200 && response.status < 300){ret.err = null}else{ret.err=true}
