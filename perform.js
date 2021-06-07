@@ -140,14 +140,16 @@ async function fetchrq(prm){
   opt.method = prm.method
   opt.body = null
 
-  let client = NdFetch
+  let client = {'fetch':NdFetch}
 
   //Authen
   if(typeof prm.authen == 'object' && prm.authen.type == 'digest'){
-    client = new DigestFetch(prm.authen.username,prm.authen.password).fetch
+    client = new DigestFetch(prm.authen.username,prm.authen.password,{'basic':false})
+  }else if(typeof prm.authen == 'object' && prm.authen.type == 'basic'){
+    client = new DigestFetch(prm.authen.username,prm.authen.password,{'basic':true})
   }
 
-  let response = await client(url,opt)
+  let response = await client.fetch(url,opt)
   let respdata = await response.buffer()
 
   if(response.status >= 200 && response.status < 300){ret.err = null}else{ret.err=true}
